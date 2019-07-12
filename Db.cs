@@ -25,9 +25,9 @@ namespace Company {
       return products.Find(p => p.Id == id);
     }
 
-    public static Product CreateProduct(string name)
+    public static Product CreateProduct(Product newProduct)
     {
-      var newProduct = new Product(){ Id = products.Count + 1, Name = name}; 
+      newProduct.Id = products.Count + 1;
       products.Add(newProduct);
       return newProduct;
     }

@@ -13,31 +13,19 @@ namespace Company.Function
     public static class ProductCreate
     {
         [FunctionName("ProductCreate")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+        public static IActionResult Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "products")] Product product,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
 
-            string name = null;
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            log.LogInformation("request body", requestBody);
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name = name ?? data?.name;
-
-            if(name != null) 
+            if (product == null || product.Name == null)
             {
-                log.LogInformation("name", name);
-                var product = Db.CreateProduct(name);
-                var json = JsonConvert.SerializeObject(new{
-                    product = product
-                });
-                return (ActionResult)new OkObjectResult(json);
-            } 
-            else {
-                return new BadRequestObjectResult("Missing name in posted Body");
+                return new BadRequestObjectResult("Product missing");
             }
+
+            var newProduct = Db.CreateProduct(product);
+            return new CreatedResult($"/api/products/{newProduct.Id}", newProduct);
         }
     }
 }

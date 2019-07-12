@@ -15,17 +15,13 @@ namespace Company.Function
     public static class ProductsGet
     {
         [FunctionName("ProductsGet")]
-        public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+        public static IActionResult Run(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "products")] HttpRequest req,
             ILogger log)
         {
             log.LogInformation("C# HTTP trigger function processed a request.");
-
-            var json = JsonConvert.SerializeObject(new{
-                products = Db.GetProducts()
-            });
-
-            return (ActionResult)new OkObjectResult(json);
+            var products = Db.GetProducts();
+            return new OkObjectResult(products);
         }
     }
 }
